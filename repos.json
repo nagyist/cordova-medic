@@ -125,7 +125,7 @@
 },
 {
     "title" : "TESTMASTER",
-    "repo" : "https://git-wip-us.apache.org/repos/asf/cordova-medic.git",
+    "repo" : "https://github.com/sgrebnov/cordova-medic",
     "category" : "TESTMASTER",
     "release" : "master",
     "current" : "master"
@@ -145,8 +145,8 @@
     "title" : "PLUGMAN",
     "repo"  : "https://git-wip-us.apache.org/repos/asf/cordova-plugman.git",
     "category" : "PLUGMAN",
-    "release" : "master",
-    "current" :"master"
+    "release" : "0.21.0",
+    "current" :"0.21.0"
 }
 ,
 {
