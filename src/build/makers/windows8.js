@@ -8,7 +8,7 @@ var shell        = require('shelljs'),
     q            = require('q');
 
 
-module.exports = function(output, sha, entry_point, couchdb_host, test_timeout, callback) {
+module.exports = function(output, sha, entry_point, couchdb_cfg, test_timeout, callback) {
 
     var packageName = 'org.apache.mobilespec';
     var packageInfo = {};
@@ -65,7 +65,13 @@ module.exports = function(output, sha, entry_point, couchdb_host, test_timeout, 
             if (!fs.existsSync(output)) {
                 throw new Error('create must have failed as output path does not exist.');
             }
-            var mspec_out = path.join(output, 'www');
+            var mspec_out = path.join(output, 'www'),
+                medicConfigPath = path.join(output, '../..', 'www', 'autotest','pages', 'medic.json');
+
+            log('Medic configuration file: ' + medicConfigPath);
+            // add the medic configuration (sha,host) to destination folder
+            var medic_config='{"sha":"'+sha+'","couchdb":"'+couchdb_cfg.host+'","couchdbext":"'+couchdb_cfg.exthost+'"}';
+            fs.writeFileSync(medicConfigPath, medic_config, 'utf-8');
 
             log('Modifying Cordova Mobilespec application at:'+mspec_out);
 
@@ -105,16 +111,16 @@ module.exports = function(output, sha, entry_point, couchdb_host, test_timeout, 
                 // make sure the couch db server is whitelisted
                 var configFile = path.join(output, 'www', 'config.xml');
                 fs.writeFileSync(configFile, fs.readFileSync(configFile, 'utf-8').replace(
-                  /<access origin="http:..audio.ibeat.org" *.>/gi,'<access origin="http://audio.ibeat.org" /><access origin="'+couchdb_host+'" />', 'utf-8'));
+                  /<access origin="http:..audio.ibeat.org" *.>/gi,'<access origin="http://audio.ibeat.org" /><access origin="'+couchdb_cfg.host+'" />', 'utf-8'));
 
                 // specify couchdb server and sha for cordova medic plugin
-                var medicPluginCore = path.join(output, '..', '..', 'plugins', 'org.apache.cordova.core.medic', 'www', 'medic.js');
-                var content = fs.readFileSync(medicPluginCore).toString();
-                content = content.replace(
-                    /this\.couchdb = \'.*\'\;/, "this.couchdb = '" + couchdb_host + "';").replace(
-                    /this\.sha = \'.*\'\;/, "this.sha = '" + sha + "';"
-                );
-                fs.writeFileSync(medicPluginCore, content);
+                // var medicPluginCore = path.join(output, '..', '..', 'plugins', 'org.apache.cordova.core.medic', 'www', 'medic.js');
+                // var content = fs.readFileSync(medicPluginCore).toString();
+                // content = content.replace(
+                //     /this\.couchdb = \'.*\'\;/, "this.couchdb = '" + couchdb_host + "';").replace(
+                //     /this\.sha = \'.*\'\;/, "this.sha = '" + sha + "';"
+                // );
+                // fs.writeFileSync(medicPluginCore, content);
                 defer.resolve();
             });
         }

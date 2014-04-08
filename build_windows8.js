@@ -26,7 +26,7 @@ buildinfo('Windows8', BRANCH, function (error, sha ) {
         // timeout to execute tests, 10 min by default
         var test_timeout = config.app.timeout ? config.app.timeout : 10 * 60;
 
-        windows8(output_location, sha, config.app.entry, config.couchdb.host, test_timeout).then(function() {
+        windows8(output_location, sha, config.app.entry, config.couchdb, test_timeout).then(function() {
                 console.log('Windows8 test execution completed');
             }, function(err) {
                 TEST_OK=false;
